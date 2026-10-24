@@ -10,7 +10,7 @@ from shield.pipeline import inspect
 from shield.output_check import check_output
 
 SECRETS = ["FAKE-TOKEN-7731-DEMO"]
-PAGES_DIR = Path("attack_pages")
+PAGES_DIR = Path(sys.argv[sys.argv.index("--dir") + 1]) if "--dir" in sys.argv else Path("attack_pages")
 PAUSE = 2
 
 
@@ -118,8 +118,8 @@ def main():
         errors = [r for r in rows if r.get("on_outcome") == "model error"]
         print(f"Pages skipped because of model errors: {len(errors)}")
 
-    with open("test_results.json", "w", encoding="utf-8") as f:
-        json.dump(rows, f, indent=2)
+        with open("heldout_results.json" if "--dir" in sys.argv else "test_results.json", "w", encoding="utf-8") as f:
+         json.dump(rows, f, indent=2)
     print("\nSaved details to test_results.json")
 
 
