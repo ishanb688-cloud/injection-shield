@@ -2,7 +2,7 @@
 
 A security layer that stops hidden instructions on web pages from hijacking AI assistants.
 
-**Live demo:** LIVE_LINK_HERE
+**Live demo:** (https://injection-shield.onrender.com)
 (The free host sleeps when idle, so the first load may take up to a minute.)
 
 **Demo video:** VIDEO_LINK_HERE
