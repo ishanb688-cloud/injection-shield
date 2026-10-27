@@ -6,6 +6,7 @@ from flask import Flask, abort, jsonify, request
 
 from shield.pipeline import inspect
 from shield.output_check import check_output
+from notices import bp as notices_bp
 
 BASE = Path(__file__).parent
 PAGES_DIR = BASE / "attack_pages"
@@ -13,6 +14,7 @@ SECRETS = ["FAKE-TOKEN-7731-DEMO"]
 MAX_HTML = 20000
 
 app = Flask(__name__)
+app.register_blueprint(notices_bp)
 
 DEMO = json.loads((BASE / "demo_data.json").read_text(encoding="utf-8"))
 RESULTS = json.loads((BASE / "test_results.json").read_text(encoding="utf-8"))
@@ -126,6 +128,10 @@ body{margin:0;background:var(--bg);color:var(--text);font:15px/1.5 system-ui,Seg
 .hero h1{margin:0;font-size:28px;letter-spacing:-0.5px}
 .hero p{margin:4px 0 0;color:var(--muted)}
 h2{font-size:16px;margin:0 0 10px}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.tab{padding:10px 16px;border-radius:999px;font-weight:700}
+.tab.active{background:var(--accent);color:var(--onaccent);border-color:var(--accent)}
+section[hidden]{display:none}
 .story{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px;margin-bottom:16px}
 .step{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:14px}
 .step i{font-style:normal;display:inline-block;width:22px;height:22px;line-height:22px;text-align:center;border-radius:50%;background:var(--accent);color:var(--onaccent);font-weight:700;font-size:13px;margin-right:6px}
@@ -136,7 +142,8 @@ h2{font-size:16px;margin:0 0 10px}
 .stat.good b{color:var(--good)}
 .stat span{color:var(--muted);font-size:13px}
 .bar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:14px}
-select,button,textarea{font:inherit;color:var(--text);background:var(--card);border:1px solid var(--line);border-radius:8px;padding:8px 10px}
+select,button,textarea,input{font:inherit;color:var(--text);background:var(--card);border:1px solid var(--line);border-radius:8px;padding:8px 10px}
+input{width:100%;margin:6px 0 10px}
 button{cursor:pointer;font-weight:600}
 button.primary{background:var(--accent);color:var(--onaccent);border-color:var(--accent)}
 .verdict{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin-bottom:12px}
@@ -152,14 +159,17 @@ button.primary{background:var(--accent);color:var(--onaccent);border-color:var(-
 .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:14px}
 .card.offcard{border-top:4px solid var(--bad)}
 .card.oncard{border-top:4px solid var(--good)}
+.card.real{border-top:4px solid var(--good)}
+.card.fake{border-top:4px solid var(--bad)}
 .badge{display:inline-block;padding:2px 10px;border-radius:999px;font-size:13px;font-weight:700;margin:0 8px 6px 0}
 .bad{background:var(--badbg);color:var(--bad)}
 .good{background:var(--goodbg);color:var(--good)}
 .neutral{background:var(--warnbg);color:var(--warn)}
 .note{color:var(--muted);font-size:13px;margin:4px 0 8px}
-.answer,pre{white-space:pre-wrap;word-break:break-word;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px;margin:8px 0 0;font:13px/1.5 ui-monospace,Consolas,monospace}
+.answer,pre,.msg{white-space:pre-wrap;word-break:break-word;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px;margin:8px 0 0;font:13px/1.5 ui-monospace,Consolas,monospace}
 .item{margin:6px 0;font-size:14px}
-.item q{display:block;color:var(--muted);font-size:13px;quotes:none;margin-top:2px}
+.item.ok{color:var(--good)}
+.item q{display:block;color:var(--muted);font-size:13px;quotes:none;margin-top:2px;word-break:break-word}
 mark{background:var(--badbg);color:var(--bad);font-weight:700;padding:0 2px}
 textarea{width:100%;min-height:130px;font:13px/1.5 ui-monospace,Consolas,monospace}
 .foot{color:var(--muted);font-size:13px;margin-top:24px}
@@ -178,6 +188,13 @@ textarea{width:100%;min-height:130px;font:13px/1.5 ui-monospace,Consolas,monospa
 <p>A security layer that stops hidden instructions on web pages from hijacking AI assistants.</p>
 </div>
 </div>
+
+<div class="tabs" role="tablist">
+<button class="tab active" id="tabbtn-shield" role="tab" aria-selected="true" data-tab="shield">Shield dashboard</button>
+<button class="tab" id="tabbtn-messages" role="tab" aria-selected="false" data-tab="messages">Real vs fake messages</button>
+</div>
+
+<section id="tab-shield">
 
 <div class="story">
 <div class="step"><i>1</i>A web page looks completely normal to a person.</div>
@@ -216,6 +233,32 @@ textarea{width:100%;min-height:130px;font:13px/1.5 ui-monospace,Consolas,monospa
 </div>
 
 <p class="foot">Demo notes: the shield layers run live on every request. The assistant answers are recorded from real runs of the demo assistant (a deliberately naive design that puts instructions, user data and page text in one prompt), and the leak counts show how often each page leaked. The token in this demo is fake.</p>
+
+</section>
+
+<section id="tab-messages" hidden>
+
+<h2 style="font-size:20px;margin:4px 0 6px">Real vs fake bank messages</h2>
+<p class="note">A red-flag checker for bank-style messages. It never says a message is "real": it lists warning signs, and it checks links against your bank's official website. It also catches fake notices that give orders to an AI assistant.</p>
+<div class="verdict">Demo with made-up messages from a fictional "Example Bank" (official site: examplebank.com). It uses simple rules, so it can miss scams and can flag real messages. Never rely on it alone: confirm in your bank's official app, or on the number printed on your card.</div>
+
+<div class="cols">
+<div><h2>Real-style notices</h2><div id="n-real"></div></div>
+<div><h2>Fake messages</h2><div id="n-fake"></div></div>
+</div>
+
+<div class="card">
+<h2>Check your own message</h2>
+<p class="note">Remove OTPs, card and account numbers, UPI IDs and phone numbers before pasting. Nothing is stored. Maximum 3,000 characters.</p>
+<label for="official"><b>Your bank's official website (optional):</b></label>
+<input id="official" placeholder="for example: yourbank.com" autocomplete="off">
+<textarea id="nmine" placeholder="Paste a message here"></textarea>
+<div class="bar"><button class="primary" id="ngo">Check message</button><button id="nsample">Load example fake message</button></div>
+<div id="nout"></div>
+</div>
+
+</section>
+
 </div>
 
 <script>
@@ -379,7 +422,66 @@ $('go').addEventListener('click', async () => {
   } catch(e){ out.appendChild(el('div','note','Request failed')); }
 });
 
+function noticeBadge(v){return el('span','badge '+(v==='LIKELY FAKE'?'bad':(v==='SUSPICIOUS'?'neutral':'good')), v);}
+
+function renderNotice(box, a){
+  box.appendChild(noticeBadge(a.verdict));
+  box.appendChild(el('span','note','score ' + a.score));
+  a.positives.forEach(p => box.appendChild(el('div','item ok', '\u2713 ' + p)));
+  if(!a.indicators.length){
+    box.appendChild(el('div','note','No red flags found. This is not a guarantee: confirm in the official bank app.'));
+  }
+  a.indicators.forEach(i => {
+    const d = el('div','item');
+    d.appendChild(el('span','','+' + i.points + '  ' + i.label));
+    d.appendChild(el('q','', i.evidence));
+    box.appendChild(d);
+  });
+  a.notes.forEach(n => box.appendChild(el('div','note', n)));
+}
+
+async function initNotices(){
+  try{
+    const list = await getJSON('/api/notice/samples');
+    list.forEach(s => {
+      const card = el('div','card ' + s.kind);
+      card.appendChild(el('b','',s.title));
+      card.appendChild(el('div','msg',s.text));
+      renderNotice(card, s.analysis);
+      $('n-' + s.kind).appendChild(card);
+    });
+  } catch(e){ $('n-real').textContent = 'Could not load the examples.'; }
+}
+
+$('nsample').addEventListener('click', () => {
+  $('nmine').value = 'URGENT: your Example Bank account will be BLOCKED in 2 hours. Verify KYC at http://examplebank-kyc-secure.top/login and send your OTP.';
+  $('official').value = 'examplebank.com';
+});
+
+$('ngo').addEventListener('click', async () => {
+  const out = $('nout'); clear(out);
+  try{
+    const r = await fetch('/api/notice', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({text: $('nmine').value, official: $('official').value})});
+    const data = await r.json();
+    if(!r.ok){ out.appendChild(el('div','note', data.error || 'Request failed')); return; }
+    renderNotice(out, data);
+  } catch(e){ out.appendChild(el('div','note','Request failed')); }
+});
+
+function showTab(name){
+  ['shield','messages'].forEach(t => {
+    $('tab-' + t).hidden = (t !== name);
+    const b = $('tabbtn-' + t);
+    b.classList.toggle('active', t === name);
+    b.setAttribute('aria-selected', t === name ? 'true' : 'false');
+  });
+  history.replaceState(null, '', name === 'messages' ? '#messages' : '#shield');
+}
+document.querySelectorAll('.tab').forEach(b => b.addEventListener('click', () => showTab(b.dataset.tab)));
+
 init();
+initNotices();
+showTab(location.hash === '#messages' ? 'messages' : 'shield');
 </script>
 </body>
 </html>
