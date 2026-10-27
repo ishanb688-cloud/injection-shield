@@ -176,6 +176,81 @@ textarea{width:100%;min-height:130px;font:13px/1.5 ui-monospace,Consolas,monospa
 @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 .flash{animation:fade .35s ease}
 @media (prefers-reduced-motion:reduce){.flash{animation:none}}
+/* ===== Spatial theme: start (delete this whole block to revert) ===== */
+:root{
+  --accent2:#7c5cff;
+  --glass:rgba(255,255,255,.62);
+  --glass-line:rgba(255,255,255,.85);
+  --well:rgba(22,32,43,.06);
+  --depth:0 12px 32px rgba(31,45,90,.14),0 2px 6px rgba(31,45,90,.08),inset 0 1px 0 rgba(255,255,255,.9);
+  --depth-hi:0 20px 44px rgba(31,45,90,.20),0 4px 10px rgba(31,45,90,.10),inset 0 1px 0 rgba(255,255,255,.95);
+  --orb1:rgba(99,140,255,.55);--orb2:rgba(190,120,255,.40);--orb3:rgba(80,210,200,.35);
+  --sky:linear-gradient(160deg,#eaf0ff,#f6efff 55%,#e8fbf7);
+}
+@media (prefers-color-scheme:dark){:root{
+  --accent2:#9b7dff;
+  --glass:rgba(255,255,255,.07);
+  --glass-line:rgba(255,255,255,.16);
+  --well:rgba(0,0,0,.28);
+  --depth:0 18px 50px rgba(0,0,0,.45),0 2px 8px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.14);
+  --depth-hi:0 26px 64px rgba(0,0,0,.55),0 4px 12px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.2);
+  --orb1:rgba(70,110,255,.55);--orb2:rgba(160,90,255,.40);--orb3:rgba(40,190,180,.30);
+  --sky:linear-gradient(160deg,#070b14,#0d1224 55%,#08141a);
+}}
+html{background:var(--sky) fixed;min-height:100%}
+body{background:transparent;min-height:100vh}
+.wrap{position:relative;z-index:1}
+body::before{content:"";position:fixed;inset:-15%;z-index:-1;pointer-events:none;
+  background:radial-gradient(40% 35% at 15% 20%,var(--orb1),transparent 70%),
+             radial-gradient(35% 30% at 85% 15%,var(--orb2),transparent 70%),
+             radial-gradient(45% 40% at 70% 90%,var(--orb3),transparent 70%);
+  animation:drift 26s ease-in-out infinite alternate}
+@keyframes drift{from{transform:translate3d(0,0,0) scale(1)}to{transform:translate3d(2%,3%,0) scale(1.07)}}
+@keyframes bob{from{transform:translateY(0)}to{transform:translateY(-6px)}}
+
+.hero,.card,.stat,.step,.pill,.verdict{
+  background:var(--glass);border:1px solid var(--glass-line);border-radius:22px;
+  -webkit-backdrop-filter:blur(18px) saturate(160%);backdrop-filter:blur(18px) saturate(160%);
+  box-shadow:var(--depth);transition:transform .25s ease,box-shadow .25s ease}
+.hero{border-radius:30px;padding:24px}
+.stat,.step,.pill{border-radius:18px}
+.card:hover,.stat:hover,.step:hover,.pill:hover{transform:translateY(-3px);box-shadow:var(--depth-hi)}
+.card.offcard{border-top:1px solid var(--glass-line);box-shadow:var(--depth),inset 0 3px 0 var(--bad)}
+.card.oncard{border-top:1px solid var(--glass-line);box-shadow:var(--depth),inset 0 3px 0 var(--good)}
+.card.real{border-top:1px solid var(--glass-line);box-shadow:var(--depth),inset 0 3px 0 var(--good)}
+.card.fake{border-top:1px solid var(--glass-line);box-shadow:var(--depth),inset 0 3px 0 var(--bad)}
+.pill.fired{background:var(--goodbg);box-shadow:var(--depth),0 0 26px rgba(16,185,129,.25)}
+.hero h1{font-size:30px}
+.hero svg{filter:drop-shadow(0 8px 16px rgba(37,99,235,.45));animation:bob 5s ease-in-out infinite alternate}
+
+.tabs{position:sticky;top:12px;z-index:20;width:fit-content;max-width:100%;padding:6px;gap:6px;border-radius:999px;
+  background:var(--glass);border:1px solid var(--glass-line);
+  -webkit-backdrop-filter:blur(22px) saturate(170%);backdrop-filter:blur(22px) saturate(170%);box-shadow:var(--depth-hi)}
+.tab{background:transparent;border:1px solid transparent;border-radius:999px}
+.tab.active{background:linear-gradient(180deg,var(--accent),var(--accent2));color:var(--onaccent);border-color:transparent;box-shadow:0 6px 18px rgba(99,102,241,.45)}
+
+button,select,textarea,input{background:var(--well);border:1px solid var(--glass-line);border-radius:14px}
+button{border-radius:999px;padding:9px 16px;background:var(--glass)}
+button.primary{background:linear-gradient(180deg,var(--accent),var(--accent2));color:var(--onaccent);border-color:transparent;box-shadow:0 8px 22px rgba(99,102,241,.4)}
+button:hover{filter:brightness(1.08)}
+textarea{border-radius:16px}
+.answer,pre,.msg{background:var(--well);border-radius:14px}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+@media (max-width:760px){
+  .hero,.card,.stat,.step,.pill,.verdict{-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+  body::before{animation:none}
+  .tabs{top:8px}
+}
+@media (prefers-reduced-motion:reduce){
+  body::before,.hero svg{animation:none}
+  .card:hover,.stat:hover,.step:hover,.pill:hover{transform:none}
+}
+@media (prefers-reduced-transparency:reduce){
+  :root{--glass:var(--card)}
+  .hero,.card,.stat,.step,.pill,.verdict,.tabs{-webkit-backdrop-filter:none;backdrop-filter:none}
+}
+/* ===== Spatial theme: end ===== */
 </style>
 </head>
 <body>
