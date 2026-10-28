@@ -338,6 +338,61 @@ input{width:100%;margin:6px 0 10px}
   .st2{opacity:1}
   .tabs::before,.tab,button,.card,.stat,.node{transition:none}
 }
+/* ===== Refinement: dropdown, numbers, buttons: start (delete this block to revert) ===== */
+select{-webkit-appearance:none;appearance:none;cursor:pointer;min-width:230px;padding:12px 42px 12px 18px;
+  font-weight:600;color:var(--text);border-radius:14px;background-color:rgba(255,255,255,.05);
+  background-image:linear-gradient(45deg,transparent 50%,#8b9bff 50%),linear-gradient(135deg,#8b9bff 50%,transparent 50%);
+  background-position:calc(100% - 21px) 54%,calc(100% - 15px) 54%;background-size:6px 6px,6px 6px;background-repeat:no-repeat;
+  transition:border-color .25s ease,box-shadow .25s ease,background-color .25s ease}
+select:hover{background-color:rgba(255,255,255,.08);border-color:rgba(139,155,255,.45)}
+select option{background:#0d1017;color:#e8ecf4}
+select option:checked{background:linear-gradient(#35407f,#35407f);color:#fff}
+
+@supports (appearance:base-select){
+  select,select::picker(select){appearance:base-select}
+  select{background-image:none}
+  select::picker-icon{color:var(--accent2);transition:rotate .3s var(--ease)}
+  select:open::picker-icon{rotate:180deg}
+  select::picker(select){margin-top:8px;padding:6px;border:1px solid rgba(255,255,255,.12);border-radius:18px;
+    background:#0b0e15;box-shadow:0 30px 80px rgba(0,0,0,.65),0 0 0 1px rgba(139,155,255,.08);
+    opacity:0;transform:translateY(-8px) scale(.98);
+    transition:opacity .25s var(--ease),transform .35s var(--ease),display .35s allow-discrete,overlay .35s allow-discrete}
+  select::picker(select):popover-open{opacity:1;transform:none}
+  @starting-style{select::picker(select):popover-open{opacity:0;transform:translateY(-8px) scale(.98)}}
+  select option{padding:10px 14px;border-radius:12px;background:transparent;color:var(--text);font-weight:500;
+    transition:background-color .2s ease}
+  select option:hover,select option:focus-visible{background:rgba(139,155,255,.16)}
+  select option:checked{background:linear-gradient(135deg,rgba(139,155,255,.95),rgba(63,216,234,.85));color:var(--onaccent);font-weight:650}
+  select option::checkmark{display:none}
+}
+
+.stat b{font-family:var(--font);font-weight:700;letter-spacing:-.035em;font-variant-numeric:tabular-nums;
+  font-size:clamp(38px,5.4vw,58px);filter:drop-shadow(0 8px 26px rgba(139,155,255,.28))}
+.stat.bad b{filter:drop-shadow(0 8px 26px rgba(255,125,110,.32))}
+.stat.good b{filter:drop-shadow(0 8px 26px rgba(79,227,161,.30))}
+
+button,.ghost{letter-spacing:.01em}
+.cta{gap:14px}
+.cta button,.cta .ghost{padding:14px 26px;font-size:15px}
+.cta button:not(.primary),.cta .ghost{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.16)}
+.cta button.primary{position:relative;overflow:hidden;box-shadow:0 14px 36px rgba(99,102,241,.5)}
+.cta button.primary::before{content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(110deg,transparent 30%,rgba(255,255,255,.45) 50%,transparent 70%);
+  transform:translateX(-120%);transition:transform .8s var(--ease)}
+.cta button.primary::after{content:"\2192";margin-left:10px;transition:transform .3s var(--ease)}
+.ghost::after{content:"\2197";margin-left:8px;color:var(--accent2);transition:transform .3s var(--ease)}
+@media (hover:hover){
+  .cta button.primary:hover::before{transform:translateX(120%)}
+  .cta button.primary:hover::after{transform:translateX(4px)}
+  .ghost:hover::after{transform:translate(2px,-2px)}
+  .cta button:not(.primary):hover,.cta .ghost:hover{border-color:rgba(139,155,255,.5);background:rgba(139,155,255,.1)}
+}
+button.primary{padding:12px 24px}
+@media (prefers-reduced-motion:reduce){
+  .cta button.primary::before{display:none}
+  select,select::picker(select),select::picker-icon{transition:none}
+}
+/* ===== Refinement: dropdown, numbers, buttons: end ===== */
 </style>
 </head>
 <body>
