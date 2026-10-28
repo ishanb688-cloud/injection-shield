@@ -442,7 +442,7 @@ section:not([hidden]){animation:enter .5s var(--ease) both}
 
 <div class="tabs" role="tablist">
 <button class="tab active" id="tabbtn-shield" role="tab" aria-selected="true" data-tab="shield">Shield dashboard</button>
-<button class="tab" id="tabbtn-messages" role="tab" aria-selected="false" data-tab="messages">Real vs fake messages</button>
+<button class="tab" id="tabbtn-messages" role="tab" aria-selected="false" data-tab="messages">Scam Radar</button>
 </div>
 
 <section id="tab-shield">
@@ -489,7 +489,7 @@ section:not([hidden]){animation:enter .5s var(--ease) both}
 
 <section id="tab-messages" hidden>
 
-<h2 style="font-size:20px;margin:4px 0 6px">Real vs fake bank messages</h2>
+<h2 style="font-size:20px;margin:4px 0 6px">Scam Radar: a red-flag checker for bank messages</h2>
 <p class="note">A red-flag checker for bank-style messages. It never says a message is "real": it lists warning signs, and it checks links against your bank's official website. It also catches fake notices that give orders to an AI assistant.</p>
 <div class="verdict">Demo with made-up messages from a fictional "Example Bank" (official site: examplebank.com). It uses simple rules, so it can miss scams and can flag real messages. Never rely on it alone: confirm in your bank's official app, or on the number printed on your card.</div>
 
