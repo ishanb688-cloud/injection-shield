@@ -1,0 +1,11 @@
+{
+  "manifest_version": 3,
+  "name": "Injection Shield",
+  "version": "0.1.0",
+  "description": "Finds hidden instructions aimed at AI assistants on the current page. Runs on your device and sends nothing anywhere.",
+  "permissions": ["activeTab", "scripting"],
+  "action": {
+    "default_title": "Injection Shield",
+    "default_popup": "popup.html"
+  }
+}

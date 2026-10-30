@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Injection Shield</title>
+<style>
+  body{margin:0;width:360px;padding:16px;background:#0b0e15;color:#e8ecf4;font:14px/1.5 "Segoe UI",system-ui,sans-serif}
+  h1{margin:0 0 2px;font-size:18px}
+  .sub{margin:0 0 12px;color:#8a94a7;font-size:12px}
+  button{font:600 13px inherit;color:#e8ecf4;background:#1a2030;border:1px solid #2c3550;border-radius:999px;padding:9px 16px;cursor:pointer;margin-right:6px}
+  button.primary{color:#05070b;border:0;background:linear-gradient(135deg,#8b9bff,#3fd8ea)}
+  .badge{display:inline-block;margin:12px 0 6px;padding:3px 11px;border-radius:999px;font-size:12px;font-weight:700}
+  .bad{background:rgba(255,125,110,.15);color:#ff7d6e}
+  .good{background:rgba(79,227,161,.13);color:#4fe3a1}
+  .item{margin:8px 0;padding:10px;border:1px solid #232b3d;border-radius:10px;font-size:12px}
+  .item b{display:block;margin-bottom:2px}
+  .item q{display:block;color:#8a94a7;quotes:none;word-break:break-word}
+  .note{color:#8a94a7;font-size:12px;margin:8px 0}
+</style>
+</head>
+<body>
+  <h1>Injection Shield</h1>
+  <p class="sub">Scans this page on your device. Nothing is sent anywhere.</p>
+  <button class="primary" id="scan">Scan this page</button>
+  <button id="remove" hidden>Remove hidden text</button>
+  <div id="out"></div>
+  <script src="popup.js"></script>
+</body>
+</html>

@@ -72,6 +72,7 @@ def page(name):
             "page": name,
             "kind": item["kind"],
             "raw_text": raw_text(html),
+            "source": html[:MAX_HTML],
             "input": result,
             "off": off_view,
             "on": on_view,
@@ -723,7 +724,8 @@ $('go').addEventListener('click', async () => {
     const data = await r.json();
     if(!r.ok){ out.appendChild(el('div','note', data.error || 'Request failed')); return; }
     renderInput(out, data);
-    out.appendChild(el('div','note','Text the AI would receive after the shield:'));
+        if(data.action === 'BLOCK'){ out.appendChild(el('div','note','The AI receives nothing: the page is blocked before it reaches the assistant.')); return; }
+        out.appendChild(el('div','note','Text the AI would receive after the shield:'));
     out.appendChild(el('pre','', data.cleaned_text || '(nothing left)'));
   } catch(e){ out.appendChild(el('div','note','Request failed')); }
 });
@@ -794,6 +796,41 @@ document.querySelectorAll('[data-scroll]').forEach(b => b.addEventListener('clic
 
 init();
 initNotices();
+(function(){
+  const pick = $('pick');
+  function fresh(id){ const old = $(id); const f = old.cloneNode(true); old.parentNode.replaceChild(f, old); return f; }
+  const loadBtn = fresh('sample');
+  const goBtn = fresh('go');
+  loadBtn.textContent = "Load selected page's source";
+
+  async function runBox(){
+    const out = $('mineout'); clear(out);
+    try{
+      const r = await fetch('/api/inspect', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({html: $('mine').value})});
+      const data = await r.json();
+      if(!r.ok){ out.appendChild(el('div','note', data.error || 'Request failed')); return; }
+      renderInput(out, data);
+      if(data.action === 'BLOCK'){
+        out.appendChild(el('div','note','The AI receives nothing: the page is blocked before it reaches the assistant.'));
+      } else {
+        out.appendChild(el('div','note','Text the AI would receive after the shield:'));
+        out.appendChild(el('pre','', data.cleaned_text || '(nothing left)'));
+      }
+    } catch(e){ out.appendChild(el('div','note','Request failed')); }
+  }
+
+  goBtn.addEventListener('click', runBox);
+  loadBtn.addEventListener('click', async () => {
+    if(!pick.value) return;
+    try{
+      const d = await getJSON('/api/page/' + encodeURIComponent(pick.value));
+      $('mine').value = d.source || '';
+      loadBtn.textContent = 'Loaded: ' + pick.value;
+      await runBox();
+    } catch(e){ loadBtn.textContent = 'Could not load'; }
+  });
+  pick.addEventListener('change', () => { loadBtn.textContent = "Load selected page's source"; });
+})();
 showTab(location.hash === '#messages' ? 'messages' : 'shield');
 </script>
 </body>
