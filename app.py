@@ -833,7 +833,8 @@ $('sample').addEventListener('click', async () => {
     const d = await getJSON('/api/page/' + encodeURIComponent(name));
     $('mine').value = d.source || '';
     $('sample').textContent = 'Loaded: ' + (d.info && d.info.title ? d.info.title : name);
-    await runBox();
+       const out = $('mineout'); clear(out);
+    out.appendChild(el('div','note','Source loaded. Click "Run shield layers" to see what the shield does with it.'));
   } catch(e){ $('sample').textContent = 'Could not load'; }
 });
 
