@@ -8,7 +8,7 @@
 <p align="center">
   <b>A three-layer security filter that stops hidden instructions on web pages from hijacking AI assistants.</b><br>
   <a href="https://injection-shield.onrender.com">Live demo</a> ·
-  Demo video: [VIDEO_LINK_HERE ·](https://github.com/ishanb688-cloud/injection-shield/issues/1#issue-6144532115)
+  <a href="https://github.com/ishanb688-cloud/injection-shield/issues/1#issue-6144532115">Demo video</a> ·
   <a href="docs/ARCHITECTURE.md">Architecture</a> ·
   <a href="docs/THREAT_MODEL.md">Threat model</a> ·
   <a href="docs/EVALUATION.md">Evaluation</a>
